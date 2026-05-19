@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#203f2c" />
+  <meta name="description" content="FertiliGuia: recomendação acadêmica de adubação baseada no Boletim 100 do IAC." />
+  <title>FertiliGuia</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
+  <link rel="icon" href="./assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero" aria-label="Cabeçalho do FertiliGuia">
+      <div class="brand-row">
+        <img class="brand-logo" src="./assets/logo/fertiligui-logo.svg" alt="Logo FertiliGuia" />
+        <div>
+          <strong>FertiliGuia</strong>
+          <span>Recomendação técnica de adubação</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <p class="eyebrow">Boletim 100 • IAC</p>
+        <h1>Recomendação de adubação simples, visual e técnica.</h1>
+        <p>Calcule N, P₂O₅, K₂O, calcário, gesso e fertilizantes comerciais por hectare.</p>
+        <div class="hero-actions">
+          <a class="primary link-button" id="startBtn" href="#formSection">Começar cálculo</a>
+          <button class="ghost" id="installBtn" type="button" hidden>Instalar app</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card auth-card" aria-label="Login">
+        <div>
+          <p class="section-kicker">Acesso</p>
+          <h2>Login Google</h2>
+          <p class="muted small">Opcional. O app funciona offline e salva histórico local no navegador.</p>
+        </div>
+        <div class="auth-actions">
+          <button class="secondary" id="loginBtn" type="button">Entrar com Google</button>
+          <button class="ghost" id="logoutBtn" type="button" hidden>Sair</button>
+          <span id="userBadge" class="user-badge">Visitante</span>
+        </div>
+      </section>
+
+      <section id="formSection" class="card form-card" aria-label="Formulário de recomendação">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">Novo cálculo</p>
+            <h2>Dados da recomendação</h2>
+          </div>
+          <span class="pill">kg/ha e t/ha</span>
+        </div>
+
+        <div class="progress" aria-hidden="true">
+          <span class="active"></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <form id="calcForm" autocomplete="on">
+          <fieldset>
+            <legend>1. Contexto</legend>
+            <label>
+              Nome da propriedade ou talhão
+              <input id="talhao" name="talhao" type="text" placeholder="Ex.: Fazenda São João — Talhão 3" />
+            </label>
+
+            <div class="grid two">
+              <label>
+                Cultura
+                <select id="cultura" name="cultura" required>
+                  <option value="milho">Milho</option>
+                  <option value="soja">Soja</option>
+                  <option value="cana" disabled>Cana-de-açúcar — futuro</option>
+                  <option value="cafe" disabled>Café — futuro</option>
+                  <option value="laranja" disabled>Laranja — futuro</option>
+                </select>
+              </label>
+
+              <label>
+                Produtividade esperada
+                <select id="produtividade" name="produtividade" required>
+                  <option value="baixa">Baixa</option>
+                  <option value="media" selected>Média</option>
+                  <option value="alta">Alta</option>
+                </select>
+              </label>
+            </div>
+
+            <label id="respostaNWrap">
+              Classe de resposta a nitrogênio
+              <select id="respostaN" name="respostaN">
+                <option value="alta">Alta resposta</option>
+                <option value="media_baixa" selected>Média/baixa resposta</option>
+              </select>
+              <span class="hint">Usado no milho. Para soja, a recomendação de N mineral é normalmente zero.</span>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Modo de entrada</legend>
+            <div class="mode-switch" role="tablist" aria-label="Modo de entrada">
+              <button class="mode-btn active" type="button" data-mode="analise">Com análise de solo</button>
+              <button class="mode-btn" type="button" data-mode="estimado">Sem análise de solo</button>
+            </div>
+          </fieldset>
+
+          <fieldset id="analiseFields">
+            <legend>3. Análise de solo</legend>
+            <div class="grid three">
+              <label>pH CaCl₂<input id="ph" type="number" step="0.01" inputmode="decimal" placeholder="5.2" /></label>
+              <label>Matéria orgânica<input id="mo" type="number" step="0.1" inputmode="decimal" placeholder="25" /></label>
+              <label>P resina<input id="p" type="number" step="0.1" inputmode="decimal" placeholder="18" /></label>
+              <label>K trocável<input id="k" type="number" step="0.1" inputmode="decimal" placeholder="2.1" /></label>
+              <label>Ca<input id="ca" type="number" step="0.1" inputmode="decimal" placeholder="28" /></label>
+              <label>Mg<input id="mg" type="number" step="0.1" inputmode="decimal" placeholder="9" /></label>
+              <label>H+Al<input id="hal" type="number" step="0.1" inputmode="decimal" placeholder="38" /></label>
+              <label>V%<input id="v" type="number" step="0.1" inputmode="decimal" placeholder="Opcional" /></label>
+              <label>PRNT do calcário (%)<input id="prnt" type="number" step="1" inputmode="numeric" value="80" /></label>
+            </div>
+            <div class="grid three">
+              <label>
+                Tipo de solo
+                <select id="tipoSoloAnalise">
+                  <option value="arenoso">Arenoso</option>
+                  <option value="medio" selected>Textura média</option>
+                  <option value="argiloso">Argiloso</option>
+                </select>
+              </label>
+              <label>Argila (g/kg)<input id="argila" type="number" step="1" inputmode="numeric" placeholder="Opcional" /></label>
+              <label>V% subsolo 20–40 cm<input id="vSubsolo" type="number" step="0.1" inputmode="decimal" placeholder="Opcional" /></label>
+            </div>
+            <p class="notice">Unidades esperadas: P em mg/dm³; K, Ca, Mg e H+Al em mmolc/dm³; MO em g/dm³; V em %.</p>
+          </fieldset>
+
+          <fieldset id="estimadoFields" hidden>
+            <legend>3. Estimativa sem análise</legend>
+            <div class="grid two">
+              <label>
+                Tipo de solo
+                <select id="tipoSoloEstimado">
+                  <option value="arenoso">Arenoso</option>
+                  <option value="medio" selected>Textura média</option>
+                  <option value="argiloso">Argiloso</option>
+                </select>
+              </label>
+              <label>
+                Fertilidade estimada
+                <select id="fertilidade">
+                  <option value="baixa">Baixa</option>
+                  <option value="media" selected>Média</option>
+                  <option value="alta">Alta</option>
+                </select>
+              </label>
+            </div>
+            <p class="notice warning">Modo didático. Para recomendação técnica real, use análise de solo representativa.</p>
+          </fieldset>
+
+          <div class="form-actions sticky-actions">
+            <button class="primary" type="submit">Calcular recomendação</button>
+            <button class="ghost" id="clearBtn" type="button">Limpar</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="resultSection" class="result-section" hidden aria-live="polite">
+        <div class="section-header result-title">
+          <div>
+            <p class="section-kicker">Resultado técnico</p>
+            <h2 id="resultHeading">Recomendação por hectare</h2>
+          </div>
+          <div class="result-actions">
+            <button class="secondary" id="saveBtn" type="button">Salvar histórico</button>
+            <button class="primary" id="pdfBtn" type="button">Gerar PDF</button>
+          </div>
+        </div>
+
+        <div class="dashboard" id="dashboard"></div>
+
+        <article class="card explanation-card">
+          <div class="section-header compact">
+            <div>
+              <p class="section-kicker">IA explicativa</p>
+              <h2>Interpretação do resultado</h2>
+            </div>
+            <span class="pill safe">IA não calcula doses</span>
+          </div>
+          <div id="iaText" class="ia-text"></div>
+        </article>
+
+        <article class="card warning-card">
+          <h3>Avisos técnicos</h3>
+          <ul id="warningsList"></ul>
+        </article>
+      </section>
+
+      <section class="card history-card" aria-label="Histórico local">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">Offline</p>
+            <h2>Histórico local</h2>
+          </div>
+          <button class="ghost danger" id="clearHistoryBtn" type="button">Apagar histórico</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>FertiliGuia • Não substitui avaliação de engenheiro agrônomo.</p>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "FertiliGuia",
+  "short_name": "FertiliGuia",
+  "description": "Recomendação de adubação baseada no Boletim 100 do IAC.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7fbf5",
+  "theme_color": "#203f2c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
